@@ -1,0 +1,8 @@
+#ignore everything except verilog, quartus project, and gitignore
+*
+!.gitignore
+!*.v
+!*.qpf
+!*.mif
+!*.a32
+!*.stp
