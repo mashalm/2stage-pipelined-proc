@@ -30,8 +30,10 @@ module Project2(SW,KEY,LEDR,LEDG,HEX0,HEX1,HEX2,HEX3,CLOCK_50);
   
   //PLL, clock genration, and reset generation
   wire clk, lock;
-  PLL	PLL_inst (.inclk0 (CLOCK_50),.c0 (clk),.locked (lock));
+  //PLL	PLL_inst (.inclk0 (CLOCK_50),.c0 (clk),.locked (lock));
   wire reset = ~lock;
+  
+  assign clk = KEY[0];
 
   // Wires..
   wire pcWrtEn = 1'b1;
@@ -119,27 +121,33 @@ module Project2(SW,KEY,LEDR,LEDG,HEX0,HEX1,HEX2,HEX3,CLOCK_50);
 
   
   //Muxes for data forwarding
+  //between regfile/alumux and alu
   //wires for dataforwarding:
   wire[DBITS-1:0] dataForwardSrc1;
   wire[DBITS-1:0] dataForwardSrc2;
+  
+  wire[REG_INDEX_BIT_WIDTH-1:0] srcReg1Ind = (memWrite | branch ? instWord[31:28] : instWord[27:24]);
+  wire busy1 = ((srcReg1Ind == regWrtIndex_out) && (regFileWrtEn_out == 1'b1)) ? 1'b1 : 1'b0;
+  
   DataForwardingMux dfm1(
-    .sel({((memWrite | branch ? instWord[27:24] : instWord[23:20])==regWrtIndex_out) 
-				& (regFileWrtEn_out == 1'b1), memtoReg_out}),
+    .sel({busy1, memtoReg_out}),
     .dInSrc1(sr1Out),
     .dInSrc2(regFileAluOut_out),
     .dInSrc3(memDataOut),
     .dOut(dataForwardSrc1)
   );
 
+  wire[REG_INDEX_BIT_WIDTH-1:0] srcReg2Ind = (memWrite | branch ? instWord[27:24] : instWord[23:20]);
+  wire busy2 = ((srcReg2Ind == regWrtIndex_out) && (regFileWrtEn_out == 1'b1)) ? 1'b1 : 1'b0;
+
   DataForwardingMux dfm2(
-	  .sel({((memWrite | branch ? instWord[27:24] : instWord[23:20])==regWrtIndex_out) 
-					& (regFileWrtEn_out == 1'b1), memtoReg_out}),
+	  .sel({busy2, memtoReg_out}),
 	  .dInSrc1(aluMuxOut),
 	  .dInSrc2(regFileAluOut_out),
 	  .dInSrc3(memDataOut),
 	  .dOut(dataForwardSrc2)
-  );  
-  
+  );
+
   /*
   wire[DBITS-1:0] dataForwardSrc2Mux1Out;
   Mux2to1 #(DBITS) dataForwardSrc2(
@@ -150,6 +158,7 @@ module Project2(SW,KEY,LEDR,LEDG,HEX0,HEX1,HEX2,HEX3,CLOCK_50);
 	 .dOut(dataForwardSrc2Mux1Out)
   );
 */
+
   // Create ALU
   ALU alu (
     .dIn1(dataForwardSrc1),

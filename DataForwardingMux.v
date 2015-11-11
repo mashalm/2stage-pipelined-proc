@@ -7,6 +7,6 @@ module DataForwardingMux(sel, dInSrc1, dInSrc2, dInSrc3, dOut);
 	output [BIT_WIDTH - 1 : 0] dOut;
   
 	assign dOut = (sel[1] == 0) ? dInSrc1 :
-						(sel[0]== 0) ? dInSrc2 :
+					  (sel[0] == 0) ? dInSrc2 :
 											dInSrc3;
 endmodule
