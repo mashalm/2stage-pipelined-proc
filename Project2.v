@@ -30,10 +30,10 @@ module Project2(SW,KEY,LEDR,LEDG,HEX0,HEX1,HEX2,HEX3,CLOCK_50);
   
   //PLL, clock genration, and reset generation
   wire clk, lock;
-  //PLL	PLL_inst (.inclk0 (CLOCK_50),.c0 (clk),.locked (lock));
+  PLL	PLL_inst (.inclk0 (CLOCK_50),.c0 (clk),.locked (lock));
   wire reset = ~lock;
   
-  assign clk = KEY[0];
+  //assign clk = KEY[0];
 
   // Wires..
   wire pcWrtEn = 1'b1;
@@ -175,7 +175,7 @@ module Project2(SW,KEY,LEDR,LEDG,HEX0,HEX1,HEX2,HEX3,CLOCK_50);
   //add the buffer:
   PipeRegister pr (
 	 .clk(clk), 
-	 .dmemDataIn(sr2Out), 
+	 .dmemDataIn(dataForwardSrc2), //instead of sr2out
 	 .dmemWrtEn(memWrite),
 	 .memtoReg(memtoReg),
 	 .jal(jal),
