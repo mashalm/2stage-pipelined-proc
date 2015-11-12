@@ -86,7 +86,7 @@ module Project2(SW,KEY,LEDR,LEDG,HEX0,HEX1,HEX2,HEX3,CLOCK_50);
   );
   
   // Create Instruction Memory
-  InstMemory #(IMEM_INIT_FILE, IMEM_ADDR_BIT_WIDTH, IMEM_DATA_BIT_WIDTH) instMemory (
+  InstMemory #(IMEM_INIT_FILE, IMEM_ADDR_BIT_WIDTH, IMEM_DATA_BIT_WIDTH) inst_mem (
     .addr(pcOut[IMEM_PC_BITS_HI - 1 : IMEM_PC_BITS_LO]),
     .dataOut(instWord)
   );
@@ -117,7 +117,7 @@ module Project2(SW,KEY,LEDR,LEDG,HEX0,HEX1,HEX2,HEX3,CLOCK_50);
   );
 
   // Create Dual Ported Register File
-  RegisterFile #(DBITS, REG_INDEX_BIT_WIDTH) dprf (
+  RegisterFile #(DBITS, REG_INDEX_BIT_WIDTH) rf (
     .clk(clk),
     .wrtEn(regFileWrtEn_out),
     .dIn(dataMuxOut),
@@ -201,7 +201,7 @@ module Project2(SW,KEY,LEDR,LEDG,HEX0,HEX1,HEX2,HEX3,CLOCK_50);
   );
   
   // Create DataMemory
-  DataMemory #(IMEM_INIT_FILE, DMEM_ADDR_BIT_WIDTH, DMEM_DATA_BIT_WIDTH, TRUE_DMEM_ADDR_BIT_WIDTH) dataMemory (
+  DataMemory #(IMEM_INIT_FILE, DMEM_ADDR_BIT_WIDTH, DMEM_DATA_BIT_WIDTH, TRUE_DMEM_ADDR_BIT_WIDTH) data_mem (
     .clk(clk),
     .wrtEn(dmemWrtEn_out),
     .addr(dmemAddr_out),

@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+
 module SingleCycleProcTest;
 
 reg clk, reset;
@@ -11,9 +13,9 @@ integer i, counter;
 
 always #10 clk = ~clk;
 
-singlecycleproc CPU(
-    .clk    (clk),
-    .reset  (reset),
+Project2 CPU(
+    //.clk    (clk),
+    //.reset  (reset),
     .SW     (switches),
     .KEY    (keys),
     .LEDR   (ledr),
