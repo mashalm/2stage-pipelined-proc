@@ -15,7 +15,7 @@ always #10 clk = ~clk;
 
 Project2 CPU(
     //.clk    (clk),
-    //.reset  (reset),
+    .reset  (reset),
     .SW     (switches),
     .KEY    (keys),
     .LEDR   (ledr),
@@ -45,6 +45,9 @@ initial begin
 
     CPU.rf.registers[1] = 10;
     CPU.rf.registers[2] = 20;
+	 
+	 //initialize pc
+	 //CPU.PLL_inst.locked = 1'b1;
 
     // Load instructions into instruction data
     $readmemh("../instructions.txt", CPU.inst_mem.data);
