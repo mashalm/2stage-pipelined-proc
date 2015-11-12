@@ -1,4 +1,4 @@
-<session jtag_chain="USB-Blaster [USB-0]" jtag_device="@1: EP2C(15|20) (0x020B30DD)" sof_file="">
+<session jtag_chain="Disabled" sof_file="">
   <display_tree gui_logging_enabled="0">
     <display_branch instance="auto_signaltap_0" signal_set="USE_GLOBAL_TEMP" trigger="USE_GLOBAL_TEMP"/>
   </display_tree>
@@ -154,7 +154,7 @@
     <single attribute="hierarchy widget visible" value="1"/>
     <single attribute="instance widget visible" value="1"/>
     <single attribute="jtag widget visible" value="1"/>
-    <multi attribute="column width" size="23" value="100,82,140,74,68,139,160,88,98,98,88,75,236,101,101,101,101,101,101,101,101,107,78"/>
+    <multi attribute="column width" size="23" value="101,153,261,74,68,271,304,88,98,98,88,88,320,101,101,101,101,101,101,101,101,107,78"/>
     <multi attribute="frame size" size="2" value="1920,970"/>
     <multi attribute="jtag widget size" size="2" value="515,183"/>
   </global_info>

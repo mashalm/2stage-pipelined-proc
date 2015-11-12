@@ -44,6 +44,23 @@ module Project2(SW,KEY,LEDR,LEDG,HEX0,HEX1,HEX2,HEX3,CLOCK_50);
   wire [IMEM_DATA_BIT_WIDTH - 1 : 0] instWord;
   wire [DBITS - 1 : 0] pcIn, pcOut, incrementedPC, pcAdderOut, aluOut, signExtImm, dataMuxOut, sr1Out, sr2Out, aluMuxOut, memDataOut;
   
+  //wires for the buffer:
+  wire[DBITS-1:0] dmemAddr_out, regFileAluOut_out, dmemDataIn_out, PCinc_out;
+  wire dmemWrtEn_out, memtoReg_out, jal_out, regFileWrtEn_out;
+  wire[REG_INDEX_BIT_WIDTH-1:0] regWrtIndex_out;
+  
+  //wires for dataforwarding:
+  wire[DBITS-1:0] dataForwardSrc1;
+  wire[DBITS-1:0] dataForwardSrc2;
+  
+  wire[REG_INDEX_BIT_WIDTH-1:0] srcReg1Ind = (memWrite | branch ? instWord[31:28] : instWord[27:24]);
+  wire busy1 = ((srcReg1Ind == regWrtIndex_out) && (regFileWrtEn_out == 1'b1)) ? 1'b1 : 1'b0;
+  
+  wire[REG_INDEX_BIT_WIDTH-1:0] srcReg2Ind = (memWrite | branch ? instWord[27:24] : instWord[23:20]);
+  wire busy2 = ((srcReg2Ind == regWrtIndex_out) && (regFileWrtEn_out == 1'b1)) ? 1'b1 : 1'b0;
+
+  
+  
   // Create PCMUX
   Mux3to1 #(DBITS) pcMux (
     .sel({jal, (branch & aluOut[0])}),
@@ -122,12 +139,6 @@ module Project2(SW,KEY,LEDR,LEDG,HEX0,HEX1,HEX2,HEX3,CLOCK_50);
   
   //Muxes for data forwarding
   //between regfile/alumux and alu
-  //wires for dataforwarding:
-  wire[DBITS-1:0] dataForwardSrc1;
-  wire[DBITS-1:0] dataForwardSrc2;
-  
-  wire[REG_INDEX_BIT_WIDTH-1:0] srcReg1Ind = (memWrite | branch ? instWord[31:28] : instWord[27:24]);
-  wire busy1 = ((srcReg1Ind == regWrtIndex_out) && (regFileWrtEn_out == 1'b1)) ? 1'b1 : 1'b0;
   
   DataForwardingMux dfm1(
     .sel({busy1, memtoReg_out}),
@@ -136,9 +147,6 @@ module Project2(SW,KEY,LEDR,LEDG,HEX0,HEX1,HEX2,HEX3,CLOCK_50);
     .dInSrc3(memDataOut),
     .dOut(dataForwardSrc1)
   );
-
-  wire[REG_INDEX_BIT_WIDTH-1:0] srcReg2Ind = (memWrite | branch ? instWord[27:24] : instWord[23:20]);
-  wire busy2 = ((srcReg2Ind == regWrtIndex_out) && (regFileWrtEn_out == 1'b1)) ? 1'b1 : 1'b0;
 
   DataForwardingMux dfm2(
 	  .sel({busy2, memtoReg_out}),
@@ -168,10 +176,7 @@ module Project2(SW,KEY,LEDR,LEDG,HEX0,HEX1,HEX2,HEX3,CLOCK_50);
     .dOut(aluOut)
   );
   
-  //wires for the buffer:
-   wire[DBITS-1:0] dmemAddr_out, regFileAluOut_out, dmemDataIn_out, PCinc_out;
-	wire dmemWrtEn_out, memtoReg_out, jal_out, regFileWrtEn_out;
-	wire[REG_INDEX_BIT_WIDTH-1:0] regWrtIndex_out;
+
   //add the buffer:
   PipeRegister pr (
 	 .clk(clk), 
