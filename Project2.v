@@ -54,10 +54,10 @@ module Project2(SW,KEY,LEDR,LEDG,HEX0,HEX1,HEX2,HEX3,CLOCK_50);
   wire[DBITS-1:0] dataForwardSrc2;
   
   wire[REG_INDEX_BIT_WIDTH-1:0] srcReg1Ind = (memWrite | branch ? instWord[31:28] : instWord[27:24]);
-  wire busy1 = ((srcReg1Ind == regWrtIndex_out) && (regFileWrtEn_out == 1'b1)) ? 1'b1 : 1'b0;
+  wire busy1 = ((srcReg1Ind == regWrtIndex_out) && (regFileWrtEn_out)) ? 1'b1 : 1'b0;
   
   wire[REG_INDEX_BIT_WIDTH-1:0] srcReg2Ind = (memWrite | branch ? instWord[27:24] : instWord[23:20]);
-  wire busy2 = ((srcReg2Ind == regWrtIndex_out) && (regFileWrtEn_out == 1'b1)) ? 1'b1 : 1'b0;
+  wire busy2 = ((srcReg2Ind == regWrtIndex_out) && (regFileWrtEn_out)) ? 1'b1 : 1'b0;
 
   // Create PCMUX
   Mux3to1 #(DBITS) pcMux (
@@ -129,7 +129,7 @@ module Project2(SW,KEY,LEDR,LEDG,HEX0,HEX1,HEX2,HEX3,CLOCK_50);
 
   //Muxes for data forwarding
   //between regfile and alumux/alu
-  
+ /* 
   DataForwardingMux dfm1(
     .sel({busy1, memtoReg_out}),
     .dInSrc1(sr1Out),
@@ -145,6 +145,10 @@ module Project2(SW,KEY,LEDR,LEDG,HEX0,HEX1,HEX2,HEX3,CLOCK_50);
 	  .dInSrc3(memDataOut),
 	  .dOut(dataForwardSrc2)
   );
+  */
+  
+  assign dataForwardSrc1 = (busy1==1'b1) ? dataMuxOut : sr1Out;
+  assign dataForwardSrc2 = (busy2==1'b1) ? dataMuxOut : sr2Out;
 
     // Create AluMux (Between DPRF and ALU)
   Mux2to1 #(DBITS) aluMux (
